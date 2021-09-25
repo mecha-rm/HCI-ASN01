@@ -1,4 +1,5 @@
 # Names: Adam Kahil, Eric Aivaliotis, Hao Tian Guan, and Roderick "R.J." Montague
+# Date: 09/25/2021
 # Description:
 # References:
 
@@ -148,9 +149,98 @@ if (!require(reshape2)) install.packages(reshape2)
 library(ggplot2)
 library(reshape2)
 
-barplot(sort(table(positive), beside = T), xlab = "H", ylab = "V")
-barplot(sort(table(negative), beside = T), xlab = "H", ylab = "V")
-barplot(sort(table(tiredness), beside = T), xlab = "H", ylab = "V")
-barplot(sort(table(reality), beside = T), xlab = "H", ylab = "V")
+# QUESTION 1 - NEW CODE
+summaries$pos_avg 
+summaries$neg_avg
+summaries$tiredness_avg
+summaries$reality_avg
+
+# TODO: fix
+# charting
+# the rep() function is being used instead of directly plugging in the values (e.g. 'positive' = rep(...) instead of 'positive' = positive)
+# this is so that the data is copied instead of reused.
+
+# question required to be in a data frame, so cbind was not used.
+exp_all <- data.frame(
+  'positive' = rep(x = positive, times = 1),
+  'negative' = rep(x = negative, times = 1),
+  'tiredness' = rep(x = tiredness, times = 1),
+  'reality' = rep(x = reality, times = 1)
+  )
+
+colours = c("red", "green", "blue", "cyan", "yellow")
+barplot(as.matrix(exp_all), main = "Dark Souls Experience Chart", xlab = "Experience", ylab = "Amount", beside = TRUE, col = colours)
 
 
+# QUESTION 2 - Plotting Questions
+# Original Code (lines repeated from part 1 have been taken out)
+
+#convert to wide
+if (!require(likert)) install.packages(likert) # new line
+library(likert)
+# library(reshape) #for cast; already implemented.
+
+#bring it to the wide format
+# wideData<-cast(my_data, player + game ~ Q, value = "rank")
+wideData
+
+game = c("Demon's Souls 2009", "Demon's Souls 2020")
+
+#Note: displays only the first 5 out of 17 questions
+n_questions_display <- 5
+n_questions_display <- n_questions_display + 2
+
+if (!require(plyr)) install.packages("plyr")
+wideData[3:n_questions_display] <- lapply(wideData[3:n_questions_display], factor, levels=0:4)
+#create likert
+likt <- likert::likert(wideData[,c(3:n_questions_display)], grouping = wideData$game)#, group.order = game)
+
+#define better colors
+cs <- c("#e9505a","#f6b9bd","gray88","#cfcfe8","#7474b0")
+#define order in which the levels of the group variable will appear
+order <- c("Demon's Souls 2009", "Demon's Souls 2020")
+#plot
+plot(likt,  plot.percents=TRUE, colors = cs, group.order = order)
+
+
+
+
+###########
+#Boxplot
+###########
+
+#Diverging stacked bar chart is the best way to display likert data
+#We can also use a box plot, although it's less optimal
+#Let's do it anyway as an exercise
+#we will do it for the first question only
+
+#make sure to run this again to clear the factor operations we performed above
+wideData<-cast(my_data, player + game ~ Q, value = "rank")
+
+#1. first isolate first three cols
+subWideData <- wideData[,c(1,2,3)]
+#rename last column to simply 'rank'
+names(subWideData)[names(subWideData) == colnames(subWideData)[3]] <- 'rank'
+
+
+if (!require(ggpubr)) install.packages("ggpubr")
+library("ggpubr")
+ggboxplot(subWideData, x = "game", y = "rank")
+
+#why there is no 1st quartile?
+#subWideData2020 = subWideData[game == "Demon's Souls 2020",]
+#quantile(subWideData2020$rank)
+
+
+###########
+#Histogram
+###########
+
+library(ggplot2)        # for generating visualizations
+ggplot(subWideData, aes(x = rank)) +
+  geom_histogram(fill = "white", colour = "black") +
+  facet_grid(game~.)
+
+# The bins are not specified. To specify the bins, add "bins =" to the geom line above, and give it a number.
+# If you don't, you will get a warning.
+# geom_histogram(fill = "white", colour = "black", bins = int)
