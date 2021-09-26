@@ -193,6 +193,14 @@ agg_rea <- aggregate(summaries$reality_avg, by=list(Category=summaries$game), FU
 
 # question required to be in a data frame, so cbind was not used.
 
+# all experience values
+# exp_all <- data.frame(
+#  'positive' = agg_pos,
+#  'negative' = agg_neg,
+#  'tiredness' = agg_tir,
+#  'reality' = agg_rea
+#)
+
 # passed numbers only
 exp_vals <- data.frame(
   'positive' = agg_pos$x,
@@ -203,14 +211,15 @@ exp_vals <- data.frame(
 
 exp_vals
 
-# TODO: rename variables
+# length of the y-axis (highest value rounded, plus 1)
+bp_ylim = c(0, round(max(exp_vals)) + 1)
+
+# uncomment themed ver. if using basic
 bp_cols = c("red", "blue") # basic
 bp_cols = c("#2854b5", "#e0ca19") # themed
 
 barplot(as.matrix(exp_vals), main = "Dark Souls Experience Chart", xlab = "Experience", ylab = "Average",
-        legend.text = agg_pos$Category, beside = TRUE, col = bp_cols)
-
-
+        legend.text = agg_pos$Category, beside = TRUE, col = bp_cols, ylim = bp_ylim)
 
 # TODO: figure out how to export box plot (ggsave doesn't work since it's not a ggplot)
 # if files should be automatically exported.
