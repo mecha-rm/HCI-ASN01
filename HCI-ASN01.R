@@ -5,6 +5,7 @@
 # - https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/rep
 # - https://stackoverflow.com/questions/7201341/how-can-two-strings-be-concatenated
 # - https://stackoverflow.com/questions/28592729/how-to-save-plots-inside-a-folder
+# - https://www.rdocumentation.org/packages/ggplot2/versions/3.3.5/topics/ggsave
 
 # INFR 4350U - Human-Computer Interactions for Games - Assignment 1
 
@@ -178,11 +179,12 @@ library(reshape2)
 
 ### QUESTION 1 - NEW CODE ###
 
-
-summaries$pos_avg 
-summaries$neg_avg
-summaries$tiredness_avg
-summaries$reality_avg
+# this is the data that must be put into a graph
+# x is the values, Category is the labels
+agg_pos <- aggregate(summaries$pos_avg, by=list(Category=summaries$game), FUN=mean)
+agg_neg <- aggregate(summaries$neg_avg, by=list(Category=summaries$game), FUN=mean)
+agg_tir <- aggregate(summaries$tiredness_avg, by=list(Category=summaries$game), FUN=mean)
+agg_rea <- aggregate(summaries$reality_avg, by=list(Category=summaries$game), FUN=mean)
 
 # TODO: fix
 # charting
@@ -190,17 +192,32 @@ summaries$reality_avg
 # this is so that the data is copied instead of reused.
 
 # question required to be in a data frame, so cbind was not used.
-exp_all <- data.frame(
-  'positive' = rep(x = positive, times = 1),
-  'negative' = rep(x = negative, times = 1),
-  'tiredness' = rep(x = tiredness, times = 1),
-  'reality' = rep(x = reality, times = 1)
-  )
 
-bp_cols = c("red", "green", "blue", "cyan", "yellow")
-barplot(as.matrix(exp_all), main = "Dark Souls Experience Chart", xlab = "Experience", ylab = "Amount", beside = TRUE, col = bp_cols)
+# passed numbers only
+exp_vals <- data.frame(
+  'positive' = agg_pos$x,
+  'negative' = agg_neg$x,
+  'tiredness' = agg_tir$x,
+  'reality' = agg_rea$x
+)
+
+exp_vals
+
+# TODO: rename variables
+bp_cols = c("red", "blue") # basic
+bp_cols = c("#2854b5", "#e0ca19") # themed
+
+barplot(as.matrix(exp_vals), main = "Dark Souls Experience Chart", xlab = "Experience", ylab = "Average",
+        legend.text = agg_pos$Category, beside = TRUE, col = bp_cols)
+
+
 
 # TODO: figure out how to export box plot (ggsave doesn't work since it's not a ggplot)
+# if files should be automatically exported.
+#if(auto_export) {
+#  ggsave(filename = "hci-asn01.png", path = export_path)
+#  ggsave(filename = "hci-asn01.eps", path = export_path)
+#}
 
 ####################################################
 
