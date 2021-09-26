@@ -1,12 +1,37 @@
 # Names: Adam Kahil, Eric Aivaliotis, Hao Tian Guan, and Roderick "R.J." Montague
-# Date: 09/25/2021
+# Date: 09/26/2021
 # Description:
 # References:
 # - https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/rep
+# - https://stackoverflow.com/questions/7201341/how-can-two-strings-be-concatenated
+# - https://stackoverflow.com/questions/28592729/how-to-save-plots-inside-a-folder
 
 # INFR 4350U - Human-Computer Interactions for Games - Assignment 1
 
-# 1.Grouped Bar Chart
+# EXPORT SETTINGS #
+# if 'true', the files are exported. If false, the contents are not exported.
+auto_export <- TRUE
+
+# setting the folder path. Not that it automatically does it relative to the working directory.
+# as such, only the folder needs to be provided. The second example shows how you would the full path.
+
+# folder
+export_path <- "exports"
+
+# for giving full path (unneeded since it adds the working directory by default)
+# export_path <- paste(getwd(), sep = "", "/exports") # working directory + folder path
+
+auto_export
+export_path
+
+# QUESTION #
+ques <- "Question 1"
+ques
+
+# QUESTION 1 - Grouped Bar Chart
+
+### ORIGINAL CODE (ACTIVITY 1) ###
+
 # compare scores for Positive Experience, Negative Experience, Tiredness, and Returning to Reality.
 set.seed(0)
 q1a = floor(rnorm(10,2,1))
@@ -150,7 +175,10 @@ if (!require(reshape2)) install.packages(reshape2)
 library(ggplot2)
 library(reshape2)
 
-# QUESTION 1 - NEW CODE
+
+### QUESTION 1 - NEW CODE ###
+
+
 summaries$pos_avg 
 summaries$neg_avg
 summaries$tiredness_avg
@@ -173,7 +201,11 @@ bp_cols = c("red", "green", "blue", "cyan", "yellow")
 barplot(as.matrix(exp_all), main = "Dark Souls Experience Chart", xlab = "Experience", ylab = "Amount", beside = TRUE, col = bp_cols)
 
 ####################################################
-# QUESTION 2 - Plotting Questions
+
+### QUESTION 2 - Plotting Questions ###
+ques <- "Question 2"
+ques
+
 # Original Code (lines repeated from part 1 have been taken out)
 
 #convert to wide
@@ -256,12 +288,8 @@ ggplot(subWideData, aes(x = rank)) +
 # recasts instead of copying since it already had its likert set up from before.
 # dsbc_wideData = rep(x = wideData, times = 1)
 
+# the wide data
 dsbc_wideData<-cast(my_data, player + game ~ Q, value = "rank")
-
-# copying segments (inclusive, and starts at 1) - check environment to see if copied successfully.
-dsbc_wd_p1 = rep(x = wideData[1:8], times = 1) # Entries 1 - 6
-dsbc_wd_p2 = rep(x = wideData[9:14], times = 1) # Entries 7 - 12
-dsbc_wd_p3 = rep(x = wideData[15:19], times = 1) # Entries 13 - 17
 
 # print if you want to check.
 
@@ -275,18 +303,117 @@ likdsbc_cols <- c("#ffc7c7","#cdffc7","#c7f8ff","#ffff99","#fce3ff")
 #define order in which the levels of the group variable will appear
 dsbc_order <- c("Demon's Souls 2009", "Demon's Souls 2020")
 
+# question variables
+# new - controls start of list
+q_start <- 3
+
 #questions to display
-q_dis <- 6 # originally set to 5.
-q_dis <- q_dis + 2 # makes space for other 2 (e.g. if set to 5, only 3 would show up without this)
+# TODO: remove
+# e.g. prints the first six (q_start = 3, q_count = 6)
+q_count <- 6 # originally set to 5.
+q_count <- q_count + 2 # makes space for other 2 (e.g. if set to 5, only 3 would show up without this)
 # n_questions_display <- n_questions_display + 2 - change amount
 
-# Questions 1 - 5
+
+# setup
 # player already installed.
-dsbc_wideData[3:q_dis] <- lapply(dsbc_wideData[3:q_dis], factor, levels = 0:4)
 
-#create new likert
-likdsbc <- likert::likert(dsbc_wideData[,c(3:q_dis)], grouping = dsbc_wideData$game)
+# creating new likert, and plotting
 
-#plot
+###
+# 1 - 6 #
+# just redid this for the  sake of consistency.
+q_start <- 3
+q_count <- 8
+
+# applying data
+dsbc_wideData[q_start:q_count] <- lapply(dsbc_wideData[q_start:q_count], factor, levels = 0:4)
+
+# create new likert
+likdsbc <- likert::likert(dsbc_wideData[,c(q_start:q_count)], grouping = dsbc_wideData$game)
+
+# plot
 plot(likdsbc, plot.percents = TRUE, colors = likdsbc_cols, group.order = dsbc_order)
 
+# if files should be automatically exported.
+if(auto_export) {
+  ggsave(filename = "hci-asn01_q2-01-06.png", path = export_path)
+  ggsave(filename = "hci-asn01_q2-01-06.eps", path = export_path)
+  
+  }
+
+
+###
+# 7 - 12 #
+q_start <- 9
+q_count <- 14
+
+# reset data
+dsbc_wideData<-cast(my_data, player + game ~ Q, value = "rank")
+
+# applying data
+dsbc_wideData[q_start:q_count] <- lapply(dsbc_wideData[q_start:q_count], factor, levels = 0:4)
+
+# create new likert
+likdsbc <- likert::likert(dsbc_wideData[,c(q_start:q_count)], grouping = dsbc_wideData$game)
+
+# plot
+plot(likdsbc, plot.percents = TRUE, colors = likdsbc_cols, group.order = dsbc_order)
+
+# if files should be automatically exported.
+if(auto_export) {
+  ggsave(filename = "hci-asn01_q2-07-12.png", path = export_path)
+  ggsave(filename = "hci-asn01_q2-07-12.eps", path = export_path)
+}
+
+
+###
+# 13 - 17 #
+q_start <- 15
+q_count <- 19
+
+# reset data
+dsbc_wideData<-cast(my_data, player + game ~ Q, value = "rank")
+
+# applying data
+dsbc_wideData[q_start:q_count] <- lapply(dsbc_wideData[q_start:q_count], factor, levels = 0:4)
+
+# create new likert
+likdsbc <- likert::likert(dsbc_wideData[,c(q_start:q_count)], grouping = dsbc_wideData$game)
+
+# plot
+plot(likdsbc, plot.percents = TRUE, colors = likdsbc_cols, group.order = dsbc_order)
+
+# if files should be automatically exported.
+if(auto_export) {
+  ggsave(filename = "hci-asn01_q2-13-17.png", path = export_path)
+  ggsave(filename = "hci-asn01_q2-13-17.eps", path = export_path)
+}
+
+###
+# 1 - 17 (ALL)
+# this is too big to see everything, so maybe take it out.
+q_start <- 3
+q_count <- 19
+
+# reset data
+dsbc_wideData<-cast(my_data, player + game ~ Q, value = "rank")
+
+# applying data
+dsbc_wideData[q_start:q_count] <- lapply(dsbc_wideData[q_start:q_count], factor, levels = 0:4)
+
+# create new likert
+likdsbc <- likert::likert(dsbc_wideData[,c(q_start:q_count)], grouping = dsbc_wideData$game)
+
+# plot
+plot(likdsbc, plot.percents = TRUE, colors = likdsbc_cols, group.order = dsbc_order)
+
+# if files should be automatically exported.
+if(auto_export) {
+  # scale is used to zoom out the graph, as it's too big by default otherwise. It also changes the final image size.
+  ggsave(filename = "hci-asn01_q2-all.png", path = export_path,  width = 604, height = 1026, units = "px", scale = 4)
+  ggsave(filename = "hci-asn01_q2-all.eps", path = export_path, width = 604, height = 1026, units = "px", scale = 4)
+}
+
+ques <- "Question 3"
+ques
