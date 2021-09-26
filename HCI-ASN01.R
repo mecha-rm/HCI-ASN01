@@ -2,6 +2,7 @@
 # Date: 09/25/2021
 # Description:
 # References:
+# - https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/rep
 
 # INFR 4350U - Human-Computer Interactions for Games - Assignment 1
 
@@ -168,10 +169,10 @@ exp_all <- data.frame(
   'reality' = rep(x = reality, times = 1)
   )
 
-colours = c("red", "green", "blue", "cyan", "yellow")
-barplot(as.matrix(exp_all), main = "Dark Souls Experience Chart", xlab = "Experience", ylab = "Amount", beside = TRUE, col = colours)
+bp_cols = c("red", "green", "blue", "cyan", "yellow")
+barplot(as.matrix(exp_all), main = "Dark Souls Experience Chart", xlab = "Experience", ylab = "Amount", beside = TRUE, col = bp_cols)
 
-
+####################################################
 # QUESTION 2 - Plotting Questions
 # Original Code (lines repeated from part 1 have been taken out)
 
@@ -244,3 +245,48 @@ ggplot(subWideData, aes(x = rank)) +
 # The bins are not specified. To specify the bins, add "bins =" to the geom line above, and give it a number.
 # If you don't, you will get a warning.
 # geom_histogram(fill = "white", colour = "black", bins = int)
+
+
+# Question 2 - New Code
+# diverging stacked box chart
+
+#libaries already set.
+
+# widedata and game variables have already been set.
+# recasts instead of copying since it already had its likert set up from before.
+# dsbc_wideData = rep(x = wideData, times = 1)
+
+dsbc_wideData<-cast(my_data, player + game ~ Q, value = "rank")
+
+# copying segments (inclusive, and starts at 1) - check environment to see if copied successfully.
+dsbc_wd_p1 = rep(x = wideData[1:8], times = 1) # Entries 1 - 6
+dsbc_wd_p2 = rep(x = wideData[9:14], times = 1) # Entries 7 - 12
+dsbc_wd_p3 = rep(x = wideData[15:19], times = 1) # Entries 13 - 17
+
+# print if you want to check.
+
+# games
+dsbc_game = c("Demon's Souls 2009", "Demon's Souls 2020") # needed?
+
+# these were moved above the rest since the other lines will be run multiple times.
+# defining the colours using hexcodes
+likdsbc_cols <- c("#ffc7c7","#cdffc7","#c7f8ff","#ffff99","#fce3ff")
+
+#define order in which the levels of the group variable will appear
+dsbc_order <- c("Demon's Souls 2009", "Demon's Souls 2020")
+
+#questions to display
+q_dis <- 6 # originally set to 5.
+q_dis <- q_dis + 2 # makes space for other 2 (e.g. if set to 5, only 3 would show up without this)
+# n_questions_display <- n_questions_display + 2 - change amount
+
+# Questions 1 - 5
+# player already installed.
+dsbc_wideData[3:q_dis] <- lapply(dsbc_wideData[3:q_dis], factor, levels = 0:4)
+
+#create new likert
+likdsbc <- likert::likert(dsbc_wideData[,c(3:q_dis)], grouping = dsbc_wideData$game)
+
+#plot
+plot(likdsbc, plot.percents = TRUE, colors = likdsbc_cols, group.order = dsbc_order)
+
