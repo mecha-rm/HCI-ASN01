@@ -200,6 +200,8 @@ exp_all <- data.frame(
 bp_cols = c("red", "green", "blue", "cyan", "yellow")
 barplot(as.matrix(exp_all), main = "Dark Souls Experience Chart", xlab = "Experience", ylab = "Amount", beside = TRUE, col = bp_cols)
 
+# TODO: figure out how to export box plot (ggsave doesn't work since it's not a ggplot)
+
 ####################################################
 
 ### QUESTION 2 - Plotting Questions ###
@@ -411,8 +413,8 @@ plot(likdsbc, plot.percents = TRUE, colors = likdsbc_cols, group.order = dsbc_or
 # if files should be automatically exported.
 if(auto_export) {
   # scale is used to zoom out the graph, as it's too big by default otherwise. It also changes the final image size.
-  ggsave(filename = "hci-asn01_q2-all.png", path = export_path,  width = 604, height = 1026, units = "px", scale = 4)
-  ggsave(filename = "hci-asn01_q2-all.eps", path = export_path, width = 604, height = 1026, units = "px", scale = 4)
+  ggsave(filename = "hci-asn01_q2-all.png", path = export_path,  width = 544, height = 1032, units = "px", scale = 3.8)
+  ggsave(filename = "hci-asn01_q2-all.eps", path = export_path, width = 544, height = 1032, units = "px", scale = 3.8)
 }
 
 ques <- "Question 3"
