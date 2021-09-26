@@ -1,13 +1,13 @@
 # Names: Adam Kahil, Eric Aivaliotis, Hao Tian Guan, and Roderick "R.J." Montague
 # Date: 09/26/2021
-# Description:
+# Description: assignment 1 for human-computer interaction course.
 # References:
 # - https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/rep
 # - https://stackoverflow.com/questions/7201341/how-can-two-strings-be-concatenated
 # - https://stackoverflow.com/questions/28592729/how-to-save-plots-inside-a-folder
 # - https://www.rdocumentation.org/packages/ggplot2/versions/3.3.5/topics/ggsave
 
-# INFR 4350U - Human-Computer Interactions for Games - Assignment 1
+# INFR 4350U - Human-Computer Interaction for Games - Assignment 1
 
 # EXPORT SETTINGS #
 # if 'true', the files are exported. If false, the contents are not exported.
@@ -211,8 +211,8 @@ exp_vals <- data.frame(
 
 exp_vals
 
-# length of the y-axis (highest value rounded, plus 1)
-bp_ylim = c(0, round(max(exp_vals)) + 1)
+# length of the y-axis (highest value rounded up, plus 1)
+bp_ylim = c(0, ceiling(max(exp_vals)) + 1)
 
 # uncomment themed ver. if using basic
 bp_cols = c("red", "blue") # basic
@@ -443,5 +443,11 @@ if(auto_export) {
   ggsave(filename = "hci-asn01_q2-all.eps", path = export_path, width = 544, height = 1032, units = "px", scale = 3.8)
 }
 
+###########################################
+# QUESTION 3 - Grouped Bar Chart
+# you can use read to read the data directly.
 ques <- "Question 3"
 ques
+
+# import data from file
+re7_data <- read.csv("imports/RE7.csv")
