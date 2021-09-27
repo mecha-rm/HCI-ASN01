@@ -221,7 +221,8 @@ bp_cols = c("#2854b5", "#e0ca19") # themed
 barplot(as.matrix(exp_vals), main = "Dark Souls Experience Chart", xlab = "Experience", ylab = "Average",
         legend.text = agg_pos$Category, beside = TRUE, col = bp_cols, ylim = bp_ylim)
 
-# TODO: figure out how to export box plot (ggsave doesn't work since it's not a ggplot)
+
+# TODO: figure out how to export box plot (ggsave doesn't work since it's not a ggbarplot)
 # if files should be automatically exported.
 #if(auto_export) {
 #  ggsave(filename = "hci-asn01.png", path = export_path)
@@ -463,9 +464,16 @@ library("ggpubr")
 #  'heartRate' = re7_import$avgHeartRate
 #)
 
+# both versions work.
 # going to check and see if ggplot has to be used, or if this one is fine.
 # formula = y ~ grp (valus ~ grouping)
+# ver 1
 boxplot(formula = avgHeartRate ~ ï..game, data = re7_import)
+
+# ver 2
+if (!require(ggpubr)) install.packages("ggpubr")
+library("ggpubr")
+ggboxplot(re7_import, x = 'ï..game', y = 'avgHeartRate')
 
 # data frame with named columns
 re7_data<-data.frame(
