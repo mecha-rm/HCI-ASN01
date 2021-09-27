@@ -11,7 +11,7 @@
 
 # EXPORT SETTINGS #
 # if 'true', the files are exported. If false, the contents are not exported.
-auto_export <- TRUE
+auto_export <- FALSE
 
 # setting the folder path. Not that it automatically does it relative to the working directory.
 # as such, only the folder needs to be provided. The second example shows how you would the full path.
@@ -450,4 +450,50 @@ ques <- "Question 3"
 ques
 
 # import data from file
-re7_data <- read.csv("imports/RE7.csv")
+re7_import <- read.csv("imports/RE7.csv")
+re7_import
+
+
+# needed for ggboxplot
+if (!require(ggpubr)) install.packages("ggpubr")
+library("ggpubr")
+
+#re7_data<-data.frame(
+#  'game' = re7_import$ï..game,
+#  'heartRate' = re7_import$avgHeartRate
+#)
+
+# data frame with named columns
+re7_data<-data.frame(
+  'player' = 1:length(re7_import$ï..game),
+  'game' = re7_import$ï..game,
+  'heartRate' = re7_import$avgHeartRate
+)
+re7_data
+
+re7_melted<-melt.data.frame(re7_import)
+re7_melted
+
+# condenses data
+re7_wideData<-cast(re7_melted)
+# re7_wideData<-cast(re7_melted, ï..game + avgHeartRate ~ variable, value = "value")
+re7_wideData
+
+re7_subWideData<-re7_wideData[,c("ï..game", "avgHeartRate")]
+re7_subWideData
+
+# naming columns
+# colnames(re7_subWideData)[1]<- 'game'
+# colnames(re7_subWideData)[2]<- 'avgHeartRate'
+
+
+names(re7_subWideData)[names(re7_subWideData) == colnames(re7_subWideData)[1]] <- 'game'
+names(re7_subWideData)[names(re7_subWideData) == colnames(re7_subWideData)[2]] <- 'avgHeartRate'
+
+re7_subWideData
+
+# wideData<-cast(my_data, player + game ~ Q, value = "rank")
+if (!require(ggpubr)) install.packages("ggpubr")
+library("ggpubr")
+ggboxplot(data = re7_subWideData, x = "version", y = "amount")
+
