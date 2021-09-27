@@ -463,6 +463,10 @@ library("ggpubr")
 #  'heartRate' = re7_import$avgHeartRate
 #)
 
+# going to check and see if ggplot has to be used, or if this one is fine.
+# formula = y ~ grp (valus ~ grouping)
+boxplot(formula = avgHeartRate ~ ï..game, data = re7_import)
+
 # data frame with named columns
 re7_data<-data.frame(
   'player' = 1:length(re7_import$ï..game),
