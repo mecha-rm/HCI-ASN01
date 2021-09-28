@@ -573,7 +573,7 @@ re7_sd_tls = c(1.5, 3.5)
 re7_sd_tsb = 1.09
 
 # sd text size (small)
-re7_sd_tss = 0.8
+re7_sd_tss = 0.7
 
 # with outliers
 barplot(as.matrix(re7_avg_df), main = "Resident Evil 7 Averages (With Outliers)", xlab = "Version", ylab = "Average", 
@@ -648,7 +648,7 @@ abline(h = re7_tv_sd, col = re7_sd_cols[1], lwd = 1)
 # sd text
 text(x = 1.5,
      y = re7_tv_sd * 1.1,
-     paste("TV_SD = ~", round(re7_tv_sd, 3)),
+     paste("TVWO_SD = ~", round(re7_tv_sd, 3)),
      col = re7_sd_cols[2],
      cex = re7_sd_tss)
 
@@ -657,9 +657,9 @@ text(x = 1.5,
 abline(h = re7_vr_sd, col = re7_sd_cols[1], lwd = 1)
 
 # sd text
-text(x = 3.5,
+text(x = 4.5,
      y = re7_vr_sd * 1.14,
-     paste("VR_SD = ~", round(re7_vr_sd, 3)),
+     paste("VRWO_SD = ~", round(re7_vr_sd, 3)),
      col = re7_sd_cols[2],
      cex = re7_sd_tss)
 
@@ -671,9 +671,9 @@ text(x = 3.5,
 abline(h = re7_tv_dno_sd, col = re7_sd_cols[1], lwd = 1)
 
 # sd text
-text(x = 1.5,
+text(x = 2.5,
      y = re7_tv_dno_sd * 1.2,
-     paste("TV_SD = ~", round(re7_tv_dno_sd, 3)),
+     paste("TVNO_SD = ~", round(re7_tv_dno_sd, 3)),
      col = re7_sd_cols[2],
      cex = re7_sd_tss)
 
@@ -682,9 +682,11 @@ text(x = 1.5,
 abline(h = re7_vr_dno_sd, col = re7_sd_cols[1], lwd = 1)
 
 # sd text
-text(x = 3.5,
+text(x = 5.5,
      y = re7_vr_dno_sd * 1.35,
-     paste("VR_SD = ~", round(re7_vr_dno_sd, 3)),
+     paste("VRNO_SD = ~", round(re7_vr_dno_sd, 3)),
      col = re7_sd_cols[2],
      cex = re7_sd_tss)
 
+
+# Step 5 - Descriptive Statistics
