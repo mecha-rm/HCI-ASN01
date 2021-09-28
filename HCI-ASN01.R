@@ -6,6 +6,12 @@
 # - https://stackoverflow.com/questions/7201341/how-can-two-strings-be-concatenated
 # - https://stackoverflow.com/questions/28592729/how-to-save-plots-inside-a-folder
 # - https://www.rdocumentation.org/packages/ggplot2/versions/3.3.5/topics/ggsave
+# - https://www.rdocumentation.org/packages/ggplot2/versions/0.9.0/topics/ggsave
+# - https://www.stat.berkeley.edu/~s133/saving.html
+# - https://www.datamentor.io/r-programming/saving-plot/
+# - https://www.math.ucla.edu/~anderson/rw1001/library/base/html/paste.html
+# - https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/split
+# - https://stackoverflow.com/questions/3302356/how-to-split-a-data-frame
 
 # INFR 4350U - Human-Computer Interaction for Games - Assignment 1
 
@@ -27,7 +33,7 @@ export_path
 
 # QUESTION #
 ques <- "Question 1"
-ques
+print(ques)
 
 # QUESTION 1 - Grouped Bar Chart
 
@@ -218,22 +224,15 @@ bp_ylim = c(0, ceiling(max(exp_vals)) + 1)
 bp_cols = c("red", "blue") # basic
 bp_cols = c("#2854b5", "#e0ca19") # themed
 
+# display bar plot
 barplot(as.matrix(exp_vals), main = "Dark Souls Experience Chart", xlab = "Experience", ylab = "Average",
         legend.text = agg_pos$Category, beside = TRUE, col = bp_cols, ylim = bp_ylim)
-
-
-# TODO: figure out how to export box plot (ggsave doesn't work since it's not a ggbarplot)
-# if files should be automatically exported.
-#if(auto_export) {
-#  ggsave(filename = "hci-asn01.png", path = export_path)
-#  ggsave(filename = "hci-asn01.eps", path = export_path)
-#}
 
 ####################################################
 
 ### QUESTION 2 - Plotting Questions ###
 ques <- "Question 2"
-ques
+print(ques)
 
 # Original Code (lines repeated from part 1 have been taken out)
 
@@ -448,11 +447,15 @@ if(auto_export) {
 # QUESTION 3 - Grouped Bar Chart
 # you can use read to read the data directly.
 ques <- "Question 3"
-ques
+print(ques)
 
 # import data from file
 re7_import <- read.csv("imports/RE7.csv")
 re7_import
+
+# highest heart rate
+hhr <- max(re7_import$avgHeartRate)
+hhr <- hhr + 100
 
 
 # needed for ggboxplot
@@ -468,44 +471,42 @@ library("ggpubr")
 # going to check and see if ggplot has to be used, or if this one is fine.
 # formula = y ~ grp (valus ~ grouping)
 # ver 1
-boxplot(formula = avgHeartRate ~ ï..game, data = re7_import)
+boxplot(formula = avgHeartRate ~ ï..game, data = re7_import, main = "Resident Evil 7 Heart Rates", 
+        xlab = "Version", ylab = "Heart Rate", ylim = c(0, hhr))
 
 # ver 2
 if (!require(ggpubr)) install.packages("ggpubr")
 library("ggpubr")
-ggboxplot(re7_import, x = 'ï..game', y = 'avgHeartRate')
+ggboxplot(re7_import, x = 'ï..game', y = 'avgHeartRate', main = "Resident Evil 7 Heart Rates", 
+          xlab = "Version", ylab = "Heart Rate", ylim = c(0, hhr))
 
-# data frame with named columns
-re7_data<-data.frame(
-  'player' = 1:length(re7_import$ï..game),
-  'game' = re7_import$ï..game,
-  'heartRate' = re7_import$avgHeartRate
-)
-re7_data
+# splits the data into the television and vr data
+re7_split<-split(re7_import, re7_import$ï..game)
+re7_tv<-re7_split$RE7_TV
+re7_vr<-re7_split$RE7_VR
 
-re7_melted<-melt.data.frame(re7_import)
-re7_melted
+# mean
+re7_mean = mean(re7_import$avgHeartRate)
 
-# condenses data
-re7_wideData<-cast(re7_melted)
-# re7_wideData<-cast(re7_melted, ï..game + avgHeartRate ~ variable, value = "value")
-re7_wideData
+# IQRs (Q3 - Q1)
+re7_iqr<-IQR(re7_import$avgHeartRate)
+re7_tv_iqr<-IQR(re7_tv$avgHeartRate)
+re7_vr_iqr<-IQR(re7_vr$avgHeartRate)
 
-re7_subWideData<-re7_wideData[,c("ï..game", "avgHeartRate")]
-re7_subWideData
+# quantiles
+re7_q <- quantile(re7_import$avgHeartRate)
+re7_q
 
-# naming columns
-# colnames(re7_subWideData)[1]<- 'game'
-# colnames(re7_subWideData)[2]<- 'avgHeartRate'
+# lower and upper bounds to find outliers (Q1 - 1.5 * IQR > x < Q3 + 1.5 * IQR )
+re7_lb<-re7_q[2] - 1.5 * re7_iqr # 25%
+re7_ub<-re7_q[4] + 1.5 * re7_iqr # 75%
 
 
-names(re7_subWideData)[names(re7_subWideData) == colnames(re7_subWideData)[1]] <- 'game'
-names(re7_subWideData)[names(re7_subWideData) == colnames(re7_subWideData)[2]] <- 'avgHeartRate'
+# re7 data no outliers (re7_dno)
+# range: [Q1 - 1.5 * IQR, Q3 + 1.5 * IQR]
+re7_dno = rep(re7_import, times = 1) # not needed.
+re7_dno<-subset(re7_import, (re7_import$avgHeartRate > re7_lb) & (re7_import$avgHeartRate < re7_ub))
 
-re7_subWideData
-
-# wideData<-cast(my_data, player + game ~ Q, value = "rank")
-if (!require(ggpubr)) install.packages("ggpubr")
-library("ggpubr")
-ggboxplot(data = re7_subWideData, x = "version", y = "amount")
+ggboxplot(re7_dno, x = 'ï..game', y = 'avgHeartRate', main = "Resident Evil 7 Heart Rates", 
+          xlab = "Version", ylab = "Heart Rate", ylim = c(0, hhr))
 
