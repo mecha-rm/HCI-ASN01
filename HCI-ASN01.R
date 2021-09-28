@@ -228,7 +228,7 @@ bp_cols = c("red", "blue") # basic
 bp_cols = c("#2854b5", "#e0ca19") # themed
 
 # display bar plot
-barplot(as.matrix(exp_vals), main = "Dark Souls Experience Chart", xlab = "Experience", ylab = "Average",
+barplot(as.matrix(exp_vals), main = "Demon Souls Experience Chart", xlab = "Experience", ylab = "Average",
         legend.text = agg_pos$Category, beside = TRUE, col = bp_cols, ylim = bp_ylim)
 
 # if the bar plot should be exported.
@@ -244,7 +244,7 @@ if(auto_export) {
   setEPS()
   f = paste(export_path, "hci-asn01_q1.eps", sep = "/")
   postscript(f)
-  barplot(as.matrix(exp_vals), main = "Dark Souls Experience Chart", xlab = "Experience", ylab = "Average",
+  barplot(as.matrix(exp_vals), main = "Demon Souls Experience Chart", xlab = "Experience", ylab = "Average",
           legend.text = agg_pos$Category, beside = TRUE, col = bp_cols, ylim = bp_ylim)
   dev.off()
   
@@ -553,18 +553,83 @@ re7_dno_avg_df <- data.frame(
 )
 re7_dno_avg_df
 
+# standard deviations
+re7_tv_sd <- sd(re7_split$RE7_TV$avgHeartRate)
+re7_vr_sd <- sd(re7_split$RE7_VR$avgHeartRate)
+re7_tv_dno_sd <- sd(re7_dno_split$RE7_TV$avgHeartRate)
+re7_vr_dno_sd <- sd(re7_dno_split$RE7_VR$avgHeartRate)
 
-# bar charts
+# bar chart values
 re7_bp_cols = c("red", "blue")
 re7_ylim = ceiling(max(re7_avg_df, re7_dno_avg_df)) + 50
+
+# sd colors (line, text)
+re7_sd_cols = c("light green", "green")
+
+# sd text locx (single bars only)
+re7_sd_tls = c(1.5, 3.5)
+
+# sd text size (big)
+re7_sd_tsb = 1.09
+
+# sd text size (small)
+re7_sd_tss = 0.8
 
 # with outliers
 barplot(as.matrix(re7_avg_df), main = "Resident Evil 7 Averages (With Outliers)", xlab = "Version", ylab = "Average", 
         beside = TRUE, col = re7_bp_cols[1], ylim = c(0, re7_ylim))
 
+# RE7_TV
+# sd line
+abline(h = re7_tv_sd, col = re7_sd_cols[1], lwd = 1)
+
+# sd text
+text(x = re7_sd_tls[1],
+     y = re7_tv_sd * 1.1,
+     paste("TV_SD = ~", round(re7_tv_sd, 3)),
+     col = re7_sd_cols[2],
+     cex = re7_sd_tsb)
+
+# RE7_VR
+# sd line
+abline(h = re7_vr_sd, col = re7_sd_cols[1], lwd = 1)
+
+# sd text
+text(x = re7_sd_tls[2],
+     y = re7_vr_sd * 1.14,
+     paste("VR_SD = ~", round(re7_vr_sd, 3)),
+     col = re7_sd_cols[2],
+     cex = re7_sd_tsb)
+
+##
+
 # without outliers
 barplot(as.matrix(re7_dno_avg_df), main = "Resident Evil 7 Averages (No Outliers)", xlab = "Version", ylab = "Average", 
         beside = TRUE, col = re7_bp_cols[2], ylim = c(0, re7_ylim))
+
+# RE7_TV
+# sd line
+abline(h = re7_tv_dno_sd, col = re7_sd_cols[1], lwd = 1)
+
+# sd text
+text(x = re7_sd_tls[1],
+     y = re7_tv_dno_sd * 1.2,
+     paste("TV_SD = ~", round(re7_tv_dno_sd, 3)),
+     col = re7_sd_cols[2],
+     cex = re7_sd_tsb)
+
+# RE7_VR
+# sd line
+abline(h = re7_vr_dno_sd, col = re7_sd_cols[1], lwd = 1)
+
+# sd text
+text(x = re7_sd_tls[2],
+     y = re7_vr_dno_sd * 1.35,
+     paste("VR_SD = ~", round(re7_vr_dno_sd, 3)),
+     col = re7_sd_cols[2],
+     cex = re7_sd_tsb)
+
+##
 
 # both
 re7_avg_comp_df <- data.frame(
@@ -574,4 +639,52 @@ re7_avg_comp_df <- data.frame(
 
 barplot(as.matrix(re7_avg_comp_df), main = "Resident Evil 7 Averages", xlab = "Version", ylab = "Average", 
         beside = TRUE, legend.text = c('With Outliers', 'No Outliers'), col = re7_bp_cols, ylim = c(0, re7_ylim + 50))
+
+# OUTLIERS
+# RE7_TV
+# sd line
+abline(h = re7_tv_sd, col = re7_sd_cols[1], lwd = 1)
+
+# sd text
+text(x = 1.5,
+     y = re7_tv_sd * 1.1,
+     paste("TV_SD = ~", round(re7_tv_sd, 3)),
+     col = re7_sd_cols[2],
+     cex = re7_sd_tss)
+
+# RE7_VR
+# sd line
+abline(h = re7_vr_sd, col = re7_sd_cols[1], lwd = 1)
+
+# sd text
+text(x = 3.5,
+     y = re7_vr_sd * 1.14,
+     paste("VR_SD = ~", round(re7_vr_sd, 3)),
+     col = re7_sd_cols[2],
+     cex = re7_sd_tss)
+
+##
+
+# NO OUTLIERS
+# RE7_TV_DNO
+# sd line
+abline(h = re7_tv_dno_sd, col = re7_sd_cols[1], lwd = 1)
+
+# sd text
+text(x = 1.5,
+     y = re7_tv_dno_sd * 1.2,
+     paste("TV_SD = ~", round(re7_tv_dno_sd, 3)),
+     col = re7_sd_cols[2],
+     cex = re7_sd_tss)
+
+# RE7_VR_DNO
+# sd line
+abline(h = re7_vr_dno_sd, col = re7_sd_cols[1], lwd = 1)
+
+# sd text
+text(x = 3.5,
+     y = re7_vr_dno_sd * 1.35,
+     paste("VR_SD = ~", round(re7_vr_dno_sd, 3)),
+     col = re7_sd_cols[2],
+     cex = re7_sd_tss)
 
