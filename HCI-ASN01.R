@@ -9,9 +9,12 @@
 # - https://www.rdocumentation.org/packages/ggplot2/versions/0.9.0/topics/ggsave
 # - https://www.stat.berkeley.edu/~s133/saving.html
 # - https://www.datamentor.io/r-programming/saving-plot/
+# - https://www.rdocumentation.org/packages/grDevices/versions/3.6.2/topics/dev2
 # - https://www.math.ucla.edu/~anderson/rw1001/library/base/html/paste.html
 # - https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/split
 # - https://stackoverflow.com/questions/3302356/how-to-split-a-data-frame
+# - https://stackoverflow.com/questions/5142842/export-a-graph-to-eps-file-with-r
+# - https://statisticsglobe.com/export-plot-to-eps-file-in-r
 
 # INFR 4350U - Human-Computer Interaction for Games - Assignment 1
 
@@ -227,6 +230,25 @@ bp_cols = c("#2854b5", "#e0ca19") # themed
 # display bar plot
 barplot(as.matrix(exp_vals), main = "Dark Souls Experience Chart", xlab = "Experience", ylab = "Average",
         legend.text = agg_pos$Category, beside = TRUE, col = bp_cols, ylim = bp_ylim)
+
+# if the bar plot should be exported.
+if(auto_export) {
+  # both an absolute path and relative path works. This just shows the two ways of doing it.
+  
+  # png
+  f = paste(getwd(), export_path, "hci-asn01_q1.png", sep = "/")
+  dev.copy(png, f)
+  dev.off()
+  
+  # eps (requires a different setup)
+  setEPS()
+  f = paste(export_path, "hci-asn01_q1.eps", sep = "/")
+  postscript(f)
+  barplot(as.matrix(exp_vals), main = "Dark Souls Experience Chart", xlab = "Experience", ylab = "Average",
+          legend.text = agg_pos$Category, beside = TRUE, col = bp_cols, ylim = bp_ylim)
+  dev.off()
+  
+}
 
 ####################################################
 
@@ -453,20 +475,14 @@ print(ques)
 re7_import <- read.csv("imports/RE7.csv")
 re7_import
 
+
+# Step 1 - Box Plots
+
 # highest heart rate
 hhr <- max(re7_import$avgHeartRate)
 hhr <- hhr + 100
 
-
-# needed for ggboxplot
-if (!require(ggpubr)) install.packages("ggpubr")
-library("ggpubr")
-
-#re7_data<-data.frame(
-#  'game' = re7_import$ï..game,
-#  'heartRate' = re7_import$avgHeartRate
-#)
-
+ 
 # both versions work.
 # going to check and see if ggplot has to be used, or if this one is fine.
 # formula = y ~ grp (valus ~ grouping)
@@ -480,13 +496,15 @@ library("ggpubr")
 ggboxplot(re7_import, x = 'ï..game', y = 'avgHeartRate', main = "Resident Evil 7 Heart Rates", 
           xlab = "Version", ylab = "Heart Rate", ylim = c(0, hhr))
 
+# Step 2 - Outliers (IQR Method)
+
 # splits the data into the television and vr data
 re7_split<-split(re7_import, re7_import$ï..game)
 re7_tv<-re7_split$RE7_TV
 re7_vr<-re7_split$RE7_VR
 
 # mean
-re7_mean = mean(re7_import$avgHeartRate)
+re7_avg = mean(re7_import$avgHeartRate)
 
 # IQRs (Q3 - Q1)
 re7_iqr<-IQR(re7_import$avgHeartRate)
@@ -497,10 +515,11 @@ re7_vr_iqr<-IQR(re7_vr$avgHeartRate)
 re7_q <- quantile(re7_import$avgHeartRate)
 re7_q
 
-# lower and upper bounds to find outliers (Q1 - 1.5 * IQR > x < Q3 + 1.5 * IQR )
+# lower and upper bounds/q1 and q3 bounds to find outliers (Q1 - 1.5 * IQR > x < Q3 + 1.5 * IQR )
 re7_lb<-re7_q[2] - 1.5 * re7_iqr # 25%
 re7_ub<-re7_q[4] + 1.5 * re7_iqr # 75%
 
+# Step 3 - Updated Box Plots
 
 # re7 data no outliers (re7_dno)
 # range: [Q1 - 1.5 * IQR, Q3 + 1.5 * IQR]
@@ -509,4 +528,50 @@ re7_dno<-subset(re7_import, (re7_import$avgHeartRate > re7_lb) & (re7_import$avg
 
 ggboxplot(re7_dno, x = 'ï..game', y = 'avgHeartRate', main = "Resident Evil 7 Heart Rates", 
           xlab = "Version", ylab = "Heart Rate", ylim = c(0, hhr))
+
+# Step 4 - Bar Chart for Means
+# mean with outliers
+re7_tv_avg <- mean(re7_split$RE7_TV$avgHeartRate)
+re7_vr_avg <- mean(re7_split$RE7_VR$avgHeartRate)
+
+# mean without outliers
+re7_dno_split<-split(re7_dno, re7_dno$ï..game)
+re7_tv_dno_avg <- mean(re7_dno_split$RE7_TV$avgHeartRate)
+re7_vr_dno_avg <- mean(re7_dno_split$RE7_VR$avgHeartRate)
+
+# averages (with outliers)
+re7_avg_df <- data.frame(
+  'RE7_TV' = rep(re7_tv_avg, times = 1),
+  'RE7_VR' = rep(re7_vr_avg, times = 1)
+)
+re7_avg_df
+
+# averages (without outliers)
+re7_dno_avg_df <- data.frame(
+  'RE7_TV' = rep(re7_tv_dno_avg, times = 1),
+  'RE7_VR' = rep(re7_vr_dno_avg, times = 1)
+)
+re7_dno_avg_df
+
+
+# bar charts
+re7_bp_cols = c("red", "blue")
+re7_ylim = ceiling(max(re7_avg_df, re7_dno_avg_df)) + 50
+
+# with outliers
+barplot(as.matrix(re7_avg_df), main = "Resident Evil 7 Averages (With Outliers)", xlab = "Version", ylab = "Average", 
+        beside = TRUE, col = re7_bp_cols[1], ylim = c(0, re7_ylim))
+
+# without outliers
+barplot(as.matrix(re7_dno_avg_df), main = "Resident Evil 7 Averages (No Outliers)", xlab = "Version", ylab = "Average", 
+        beside = TRUE, col = re7_bp_cols[2], ylim = c(0, re7_ylim))
+
+# both
+re7_avg_comp_df <- data.frame(
+  'RE7_TV' = c(re7_tv_avg, re7_tv_dno_avg),
+  'RE7_VR' = c(re7_vr_avg, re7_vr_dno_avg)
+)
+
+barplot(as.matrix(re7_avg_comp_df), main = "Resident Evil 7 Averages", xlab = "Version", ylab = "Average", 
+        beside = TRUE, legend.text = c('With Outliers', 'No Outliers'), col = re7_bp_cols, ylim = c(0, re7_ylim + 50))
 
