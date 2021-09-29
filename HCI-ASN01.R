@@ -15,6 +15,9 @@
 # - https://stackoverflow.com/questions/3302356/how-to-split-a-data-frame
 # - https://stackoverflow.com/questions/5142842/export-a-graph-to-eps-file-with-r
 # - https://statisticsglobe.com/export-plot-to-eps-file-in-r
+# - https://www.tutorialspoint.com/r/r_mean_median_mode.htm
+# - https://www.rdocumentation.org/packages/Rmisc/versions/1.5/topics/summarySE
+# - https://www.datamentor.io/r-programming/return-function/
 
 # INFR 4350U - Human-Computer Interaction for Games - Assignment 1
 
@@ -487,13 +490,13 @@ hhr <- hhr + 100
 # going to check and see if ggplot has to be used, or if this one is fine.
 # formula = y ~ grp (valus ~ grouping)
 # ver 1
-boxplot(formula = avgHeartRate ~ ï..game, data = re7_import, main = "Resident Evil 7 Heart Rates", 
+boxplot(formula = avgHeartRate ~ ï..game, data = re7_import, main = "Resident Evil 7 Heart Rates (With Outliers)", 
         xlab = "Version", ylab = "Heart Rate", ylim = c(0, hhr))
 
 # ver 2
 if (!require(ggpubr)) install.packages("ggpubr")
 library("ggpubr")
-ggboxplot(re7_import, x = 'ï..game', y = 'avgHeartRate', main = "Resident Evil 7 Heart Rates", 
+ggboxplot(re7_import, x = 'ï..game', y = 'avgHeartRate', main = "Resident Evil 7 Heart Rates (With Outliers)", 
           xlab = "Version", ylab = "Heart Rate", ylim = c(0, hhr))
 
 # Step 2 - Outliers (IQR Method)
@@ -526,7 +529,7 @@ re7_ub<-re7_q[4] + 1.5 * re7_iqr # 75%
 re7_dno = rep(re7_import, times = 1) # not needed.
 re7_dno<-subset(re7_import, (re7_import$avgHeartRate > re7_lb) & (re7_import$avgHeartRate < re7_ub))
 
-ggboxplot(re7_dno, x = 'ï..game', y = 'avgHeartRate', main = "Resident Evil 7 Heart Rates", 
+ggboxplot(re7_dno, x = 'ï..game', y = 'avgHeartRate', main = "Resident Evil 7 Heart Rates (No Outliers)", 
           xlab = "Version", ylab = "Heart Rate", ylim = c(0, hhr))
 
 # Step 4 - Bar Chart for Means
@@ -536,6 +539,9 @@ re7_vr_avg <- mean(re7_split$RE7_VR$avgHeartRate)
 
 # mean without outliers
 re7_dno_split<-split(re7_dno, re7_dno$ï..game)
+re7_tv_dno<-re7_dno_split$RE7_TV
+re7_vr_dno<-re7_dno_split$RE7_VR
+
 re7_tv_dno_avg <- mean(re7_dno_split$RE7_TV$avgHeartRate)
 re7_vr_dno_avg <- mean(re7_dno_split$RE7_VR$avgHeartRate)
 
@@ -561,7 +567,7 @@ re7_vr_dno_sd <- sd(re7_dno_split$RE7_VR$avgHeartRate)
 
 # bar chart values
 re7_bp_cols = c("red", "blue")
-re7_ylim = ceiling(max(re7_avg_df, re7_dno_avg_df)) + 50
+re7_bp_ylim = ceiling(max(re7_avg_df, re7_dno_avg_df)) + 50
 
 # sd colors (line, text)
 re7_sd_cols = c("light green", "green")
@@ -573,11 +579,11 @@ re7_sd_tls = c(1.5, 3.5)
 re7_sd_tsb = 1.09
 
 # sd text size (small)
-re7_sd_tss = 0.7
+re7_sd_tss = 0.75
 
 # with outliers
 barplot(as.matrix(re7_avg_df), main = "Resident Evil 7 Averages (With Outliers)", xlab = "Version", ylab = "Average", 
-        beside = TRUE, col = re7_bp_cols[1], ylim = c(0, re7_ylim))
+        beside = TRUE, col = re7_bp_cols[1], ylim = c(0, re7_bp_ylim))
 
 # RE7_TV
 # sd line
@@ -605,7 +611,7 @@ text(x = re7_sd_tls[2],
 
 # without outliers
 barplot(as.matrix(re7_dno_avg_df), main = "Resident Evil 7 Averages (No Outliers)", xlab = "Version", ylab = "Average", 
-        beside = TRUE, col = re7_bp_cols[2], ylim = c(0, re7_ylim))
+        beside = TRUE, col = re7_bp_cols[2], ylim = c(0, re7_bp_ylim))
 
 # RE7_TV
 # sd line
@@ -638,7 +644,7 @@ re7_avg_comp_df <- data.frame(
 )
 
 barplot(as.matrix(re7_avg_comp_df), main = "Resident Evil 7 Averages", xlab = "Version", ylab = "Average", 
-        beside = TRUE, legend.text = c('With Outliers', 'No Outliers'), col = re7_bp_cols, ylim = c(0, re7_ylim + 50))
+        beside = TRUE, legend.text = c('With Outliers', 'No Outliers'), col = re7_bp_cols, ylim = c(0, re7_bp_ylim + 50))
 
 # OUTLIERS
 # RE7_TV
@@ -690,3 +696,142 @@ text(x = 5.5,
 
 
 # Step 5 - Descriptive Statistics
+# stats display
+if (!require(dplyr)) install.packages("dplyr")
+library(dplyr)
+
+# skewness and kurtosis
+if (!require("moments")) install.packages("moments")
+
+# uses variable to give the current values
+re7_stats = c(0, 0, 0) # initialization (will be overwritten for each set)
+
+# mode function (taken from Lecture 2 - Norminal.R)
+getmode <- function(v) { 
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))] 
+}
+
+# for summarySE
+if (!require("Rmisc")) install.packages("Rmisc")
+
+# 95% confidence interval (taken from Lecture 3 - Activity 3.R and Lecture 3 - Data.R)
+# d = data, coln = name of column with data
+getci95 <- function(d, coln) {
+  # summary SE function
+  res = summarySE(data = d, measurevar = coln, na.rm = FALSE, conf.interval = 0.95)
+  
+  # print values
+  # print(res)
+  
+  # return confidence interval
+  return(res$ci) # return ci
+  
+}
+
+
+# format:
+# sample size (n)
+# standard deviation
+# median
+# 1st quartile
+# 2nd quartile
+# 3rd quartile
+# mode
+# skewess
+# kurtosis
+# 95% confidence interval
+
+# RE7_TV (with outliers)
+print("Resident Evil 7 - TV (With Outliers)")
+re7_stats = re7_tv
+re7_stats %>%
+  dplyr::summarize(n = n(),
+                   spl = sample(avgHeartRate), # sample size
+                   sdn = sd(avgHeartRate), # standard deviation
+                   med = median(avgHeartRate), # median
+                   q1 = quantile(avgHeartRate, 0.25),
+                   q2 = quantile(avgHeartRate, 0.50),
+                   q3 = quantile(avgHeartRate, 0.75),
+                   mode = getmode(avgHeartRate),
+                   skew = skewness(avgHeartRate),
+                   kurt = kurtosis(avgHeartRate),
+                   ci95 = getci95(re7_stats, "avgHeartRate")
+                   )  
+
+# RE7_VR (with Outliers)
+print("Resident Evil 7 - vr (With Outliers)")
+re7_stats = re7_vr
+re7_stats %>%
+  dplyr::summarize(n = n(),
+                   spl = sample(avgHeartRate), # sample size
+                   sdn = sd(avgHeartRate), # standard deviation
+                   med = median(avgHeartRate), # median
+                   q1 = quantile(avgHeartRate, 0.25),
+                   q2 = quantile(avgHeartRate, 0.50),
+                   q3 = quantile(avgHeartRate, 0.75),
+                   mode = getmode(avgHeartRate),
+                   skew = skewness(avgHeartRate),
+                   kurt = kurtosis(avgHeartRate),
+                   ci95 = getci95(re7_stats, "avgHeartRate")
+                  )  
+
+
+# RE7_TV (No outliers)
+print("Resident Evil 7 - TV (No Outliers)")
+re7_stats = re7_tv_dno
+re7_stats %>%
+  dplyr::summarize(n = n(),
+                   spl = sample(avgHeartRate), # sample size
+                   sdn = sd(avgHeartRate), # standard deviation
+                   med = median(avgHeartRate), # median
+                   q1 = quantile(avgHeartRate, 0.25),
+                   q2 = quantile(avgHeartRate, 0.50),
+                   q3 = quantile(avgHeartRate, 0.75),
+                   mode = getmode(avgHeartRate),
+                   skew = skewness(avgHeartRate),
+                   kurt = kurtosis(avgHeartRate),
+                   ci95 = getci95(re7_stats, "avgHeartRate")
+  )  
+
+# RE7_VR (No Outliers)
+print("Resident Evil 7 - vr (No Outliers)")
+re7_stats = re7_vr_dno
+re7_stats %>%
+  dplyr::summarize(n = n(),
+                   spl = sample(avgHeartRate), # sample size
+                   sdn = sd(avgHeartRate), # standard deviation
+                   med = median(avgHeartRate), # median
+                   q1 = quantile(avgHeartRate, 0.25),
+                   q2 = quantile(avgHeartRate, 0.50),
+                   q3 = quantile(avgHeartRate, 0.75),
+                   mode = getmode(avgHeartRate),
+                   skew = skewness(avgHeartRate),
+                   kurt = kurtosis(avgHeartRate),
+                   ci95 = getci95(re7_stats, "avgHeartRate")
+  )  
+
+# Step 7: Histograms
+library(datasets)
+
+re7_hist_cols = c("pink", "light blue", "light green", "orange")
+re7_hist_ylim = 6
+
+bins = 10 # bins = breaks + 1 (e.g. 9 breaks = 10 bins)
+bins = max(c(bins, 0)) # bounds
+
+# with outliers
+hist(re7_tv$avgHeartRate, main = "RE7 TV Average Heart Rates (With Outliers)", xlab = "Heart Rate", 
+     col = re7_hist_cols[1], breaks = bins - 1, ylim = c(0, re7_hist_ylim))
+
+hist(re7_vr$avgHeartRate, main = "RE7 VR Average Heart Rates (With Outliers)", xlab = "Heart Rate", 
+     col = re7_hist_cols[2], breaks = bins - 1, ylim = c(0, re7_hist_ylim))
+
+
+# no outliers
+hist(re7_tv_dno$avgHeartRate, main = "RE7 TV Average Heart Rates (No Outliers)", xlab = "Heart Rate", 
+     col = re7_hist_cols[3], breaks = bins - 1, ylim = c(0, re7_hist_ylim))
+
+hist(re7_vr_dno$avgHeartRate, main = "RE7 VR Average Heart Rates (No Outliers)", xlab = "Heart Rate", 
+     col = re7_hist_cols[4], breaks = bins - 1, ylim = c(0, re7_hist_ylim))
+
