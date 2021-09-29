@@ -1,0 +1,134 @@
+Question 3 - Step 5 
+Shown below is the stats for the Resident Evil 7 data.
+There are four portions: (TV, VR, TV (no outliers), VR (no outliers)).
+The contents from the console were copied and pasted into this file.
+
+- LEGEND -
+- n = n()
+- spl = sample size
+- sdn = standard deviaton
+- med = median
+- q1 = quantile/quartile 1
+- q2 = quantile/quartile 2
+- q3 = quantile/quartile 3
+- mode = mode
+- skew = skewness
+- kurt = kurtosis
+- ci95 = confidence interval for 95%
+
+- CONSOLE EXERPT -
+
+> # RE7_TV (with outliers)
+> print("Resident Evil 7 - TV (With Outliers)")
+[1] "Resident Evil 7 - TV (With Outliers)"
+> re7_stats = re7_tv
+> re7_stats %>%
++   dplyr::summarize(n = n(),
++                    spl = sample(avgHeartRate), # sample size
++                    sdn = sd(avgHeartRate), # standard deviation
++                    med = median(avgHeartRate), # median
++                    q1 = quantile(avgHeartRate, 0.25),
++                    q2 = quantile(avgHeartRate, 0.50),
++                    q3 = quantile(avgHeartRate, 0.75),
++                    mode = getmode(avgHeartRate),
++                    skew = skewness(avgHeartRate),
++                    kurt = kurtosis(avgHeartRate),
++                    ci95 = getci95(re7_stats, "avgHeartRate")
++                    )  
+    n spl      sdn med    q1  q2  q3 mode     skew     kurt     ci95
+1  11 170 85.64377 142 120.5 142 169  168 2.057312 6.549969 57.53626
+2  11 401 85.64377 142 120.5 142 169  168 2.057312 6.549969 57.53626
+3  11 120 85.64377 142 120.5 142 169  168 2.057312 6.549969 57.53626
+4  11  84 85.64377 142 120.5 142 169  168 2.057312 6.549969 57.53626
+5  11 202 85.64377 142 120.5 142 169  168 2.057312 6.549969 57.53626
+6  11 142 85.64377 142 120.5 142 169  168 2.057312 6.549969 57.53626
+7  11 168 85.64377 142 120.5 142 169  168 2.057312 6.549969 57.53626
+8  11 130 85.64377 142 120.5 142 169  168 2.057312 6.549969 57.53626
+9  11 121 85.64377 142 120.5 142 169  168 2.057312 6.549969 57.53626
+10 11 168 85.64377 142 120.5 142 169  168 2.057312 6.549969 57.53626
+11 11 102 85.64377 142 120.5 142 169  168 2.057312 6.549969 57.53626
+> # RE7_VR (with Outliers)
+> print("Resident Evil 7 - vr (With Outliers)")
+[1] "Resident Evil 7 - vr (With Outliers)"
+> re7_stats = re7_vr
+> re7_stats %>%
++   dplyr::summarize(n = n(),
++                    spl = sample(avgHeartRate), # sample size
++                    sdn = sd(avgHeartRate), # standard deviation
++                    med = median(avgHeartRate), # median
++                    q1 = quantile(avgHeartRate, 0.25),
++                    q2 = quantile(avgHeartRate, 0.50),
++                    q3 = quantile(avgHeartRate, 0.75),
++                    mode = getmode(avgHeartRate),
++                    skew = skewness(avgHeartRate),
++                    kurt = kurtosis(avgHeartRate),
++                    ci95 = getci95(re7_stats, "avgHeartRate")
++                   )  
+    n spl      sdn med    q1  q2    q3 mode      skew     kurt     ci95
+1  11  14 58.95807 198 180.5 198 209.5  232 -2.329915 7.456286 39.60857
+2  11 201 58.95807 198 180.5 198 209.5  232 -2.329915 7.456286 39.60857
+3  11 177 58.95807 198 180.5 198 209.5  232 -2.329915 7.456286 39.60857
+4  11 223 58.95807 198 180.5 198 209.5  232 -2.329915 7.456286 39.60857
+5  11 232 58.95807 198 180.5 198 209.5  232 -2.329915 7.456286 39.60857
+6  11 202 58.95807 198 180.5 198 209.5  232 -2.329915 7.456286 39.60857
+7  11 217 58.95807 198 180.5 198 209.5  232 -2.329915 7.456286 39.60857
+8  11 174 58.95807 198 180.5 198 209.5  232 -2.329915 7.456286 39.60857
+9  11 198 58.95807 198 180.5 198 209.5  232 -2.329915 7.456286 39.60857
+10 11 184 58.95807 198 180.5 198 209.5  232 -2.329915 7.456286 39.60857
+11 11 187 58.95807 198 180.5 198 209.5  232 -2.329915 7.456286 39.60857
+> # RE7_TV (No outliers)
+> print("Resident Evil 7 - TV (No Outliers)")
+[1] "Resident Evil 7 - TV (No Outliers)"
+> re7_stats = re7_tv_dno
+> re7_stats %>%
++   dplyr::summarize(n = n(),
++                    spl = sample(avgHeartRate), # sample size
++                    sdn = sd(avgHeartRate), # standard deviation
++                    med = median(avgHeartRate), # median
++                    q1 = quantile(avgHeartRate, 0.25),
++                    q2 = quantile(avgHeartRate, 0.50),
++                    q3 = quantile(avgHeartRate, 0.75),
++                    mode = getmode(avgHeartRate),
++                    skew = skewness(avgHeartRate),
++                    kurt = kurtosis(avgHeartRate),
++                    ci95 = getci95(re7_stats, "avgHeartRate")
++   )  
+    n spl     sdn med     q1  q2  q3 mode       skew     kurt     ci95
+1  10 202 36.1357 136 120.25 136 168  168 0.09484308 2.092078 25.84992
+2  10 102 36.1357 136 120.25 136 168  168 0.09484308 2.092078 25.84992
+3  10 120 36.1357 136 120.25 136 168  168 0.09484308 2.092078 25.84992
+4  10 168 36.1357 136 120.25 136 168  168 0.09484308 2.092078 25.84992
+5  10  84 36.1357 136 120.25 136 168  168 0.09484308 2.092078 25.84992
+6  10 170 36.1357 136 120.25 136 168  168 0.09484308 2.092078 25.84992
+7  10 168 36.1357 136 120.25 136 168  168 0.09484308 2.092078 25.84992
+8  10 121 36.1357 136 120.25 136 168  168 0.09484308 2.092078 25.84992
+9  10 130 36.1357 136 120.25 136 168  168 0.09484308 2.092078 25.84992
+10 10 142 36.1357 136 120.25 136 168  168 0.09484308 2.092078 25.84992
+> # RE7_VR (No Outliers)
+> print("Resident Evil 7 - vr (No Outliers)")
+[1] "Resident Evil 7 - vr (No Outliers)"
+> re7_stats = re7_vr_dno
+> re7_stats %>%
++   dplyr::summarize(n = n(),
++                    spl = sample(avgHeartRate), # sample size
++                    sdn = sd(avgHeartRate), # standard deviation
++                    med = median(avgHeartRate), # median
++                    q1 = quantile(avgHeartRate, 0.25),
++                    q2 = quantile(avgHeartRate, 0.50),
++                    q3 = quantile(avgHeartRate, 0.75),
++                    mode = getmode(avgHeartRate),
++                    skew = skewness(avgHeartRate),
++                    kurt = kurtosis(avgHeartRate),
++                    ci95 = getci95(re7_stats, "avgHeartRate")
++   )  
+    n spl     sdn   med     q1    q2     q3 mode     skew     kurt     ci95
+1  10 217 19.6596 199.5 184.75 199.5 213.25  232 0.293357 1.880775 14.06363
+2  10 201 19.6596 199.5 184.75 199.5 213.25  232 0.293357 1.880775 14.06363
+3  10 202 19.6596 199.5 184.75 199.5 213.25  232 0.293357 1.880775 14.06363
+4  10 174 19.6596 199.5 184.75 199.5 213.25  232 0.293357 1.880775 14.06363
+5  10 187 19.6596 199.5 184.75 199.5 213.25  232 0.293357 1.880775 14.06363
+6  10 223 19.6596 199.5 184.75 199.5 213.25  232 0.293357 1.880775 14.06363
+7  10 177 19.6596 199.5 184.75 199.5 213.25  232 0.293357 1.880775 14.06363
+8  10 232 19.6596 199.5 184.75 199.5 213.25  232 0.293357 1.880775 14.06363
+9  10 184 19.6596 199.5 184.75 199.5 213.25  232 0.293357 1.880775 14.06363
+10 10 198 19.6596 199.5 184.75 199.5 213.25  232 0.293357 1.880775 14.06363

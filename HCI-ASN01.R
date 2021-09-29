@@ -1,6 +1,13 @@
-# Names: Adam Kahil, Eric Aivaliotis, Hao Tian Guan, and Roderick "R.J." Montague
-# Date: 09/26/2021
+# Names: 
+# * Adam Kahil (100655089)
+# * Eric Aivaliotis (100700292)
+# * Hao Tian Guan (100709845)
+# * Roderick "R.J." Montague (100701758)
+#
+# Date: 09/29/2021
+#
 # Description: assignment 1 for human-computer interaction course.
+#
 # References:
 # - https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/rep
 # - https://stackoverflow.com/questions/7201341/how-can-two-strings-be-concatenated
@@ -18,6 +25,7 @@
 # - https://www.tutorialspoint.com/r/r_mean_median_mode.htm
 # - https://www.rdocumentation.org/packages/Rmisc/versions/1.5/topics/summarySE
 # - https://www.datamentor.io/r-programming/return-function/
+# - http://www.cookbook-r.com/Graphs/Output_to_a_file/
 
 # INFR 4350U - Human-Computer Interaction for Games - Assignment 1
 
@@ -240,7 +248,7 @@ if(auto_export) {
   
   # png
   f = paste(getwd(), export_path, "hci-asn01_q1.png", sep = "/")
-  dev.copy(png, f)
+  dev.copy(png, f, width = 630, height = 500) # setting size manually due to a formatting issue with the automatic values.
   dev.off()
   
   # eps (requires a different setup)
@@ -811,27 +819,110 @@ re7_stats %>%
                    ci95 = getci95(re7_stats, "avgHeartRate")
   )  
 
+
 # Step 7: Histograms
 library(datasets)
 
 re7_hist_cols = c("pink", "light blue", "light green", "orange")
 re7_hist_ylim = 6
 
-bins = 10 # bins = breaks + 1 (e.g. 9 breaks = 10 bins)
+bins = 12 # bins = breaks + 1 (e.g. 9 breaks = 10 bins)
 bins = max(c(bins, 0)) # bounds
 
-# with outliers
+# re7_tv - with outliers
 hist(re7_tv$avgHeartRate, main = "RE7 TV Average Heart Rates (With Outliers)", xlab = "Heart Rate", 
      col = re7_hist_cols[1], breaks = bins - 1, ylim = c(0, re7_hist_ylim))
 
+# export
+if(auto_export) {
+  # both an absolute path and relative path works. This just shows the two ways of doing it.
+  
+  # png
+  f = paste(getwd(), export_path, "hci-asn03_q3_s7_01.png", sep = "/")
+  dev.copy(png, f)
+  dev.off()
+  
+  # eps (requires a different setup)
+  setEPS()
+  f = paste(export_path, "hci-asn03_q3_s7_01.eps", sep = "/")
+  postscript(f)
+  hist(re7_tv$avgHeartRate, main = "RE7 TV Average Heart Rates (With Outliers)", xlab = "Heart Rate", 
+       col = re7_hist_cols[1], breaks = bins - 1, ylim = c(0, re7_hist_ylim))
+  dev.off()
+  
+}
+
+
+# re7_vr - with outliers
 hist(re7_vr$avgHeartRate, main = "RE7 VR Average Heart Rates (With Outliers)", xlab = "Heart Rate", 
      col = re7_hist_cols[2], breaks = bins - 1, ylim = c(0, re7_hist_ylim))
 
+# export
+if(auto_export) {
+  # both an absolute path and relative path works. This just shows the two ways of doing it.
+  
+  # png
+  f = paste(getwd(), export_path, "hci-asn03_q3_s7_02.png", sep = "/")
+  dev.copy(png, f)
+  dev.off()
+  
+  # eps (requires a different setup)
+  setEPS()
+  f = paste(export_path, "hci-asn03_q3_s7_02.eps", sep = "/")
+  postscript(f)
+  hist(re7_vr$avgHeartRate, main = "RE7 VR Average Heart Rates (With Outliers)", xlab = "Heart Rate", 
+       col = re7_hist_cols[2], breaks = bins - 1, ylim = c(0, re7_hist_ylim))
+  dev.off()
+  
+}
 
-# no outliers
+
+
+# re7_tv - no outliers
 hist(re7_tv_dno$avgHeartRate, main = "RE7 TV Average Heart Rates (No Outliers)", xlab = "Heart Rate", 
      col = re7_hist_cols[3], breaks = bins - 1, ylim = c(0, re7_hist_ylim))
 
+# export
+if(auto_export) {
+  # both an absolute path and relative path works. This just shows the two ways of doing it.
+  
+  # png
+  f = paste(getwd(), export_path, "hci-asn03_q3_s7_03.png", sep = "/")
+  dev.copy(png, f)
+  dev.off()
+  
+  # eps (requires a different setup)
+  setEPS()
+  f = paste(export_path, "hci-asn03_q3_s7_03.eps", sep = "/")
+  postscript(f)
+  hist(re7_tv_dno$avgHeartRate, main = "RE7 TV Average Heart Rates (No Outliers)", xlab = "Heart Rate", 
+       col = re7_hist_cols[3], breaks = bins - 1, ylim = c(0, re7_hist_ylim))
+  dev.off()
+  
+}
+
+
+
+# re7_vr - no outliers
 hist(re7_vr_dno$avgHeartRate, main = "RE7 VR Average Heart Rates (No Outliers)", xlab = "Heart Rate", 
      col = re7_hist_cols[4], breaks = bins - 1, ylim = c(0, re7_hist_ylim))
+
+# export
+if(auto_export) {
+  # both an absolute path and relative path works. This just shows the two ways of doing it.
+  
+  # png
+  f = paste(getwd(), export_path, "hci-asn03_q3_s7_04.png", sep = "/")
+  dev.copy(png, f)
+  dev.off()
+  
+  # eps (requires a different setup)
+  setEPS()
+  f = paste(export_path, "hci-asn03_q3_s7_04.eps", sep = "/")
+  postscript(f)
+  hist(re7_vr_dno$avgHeartRate, main = "RE7 VR Average Heart Rates (No Outliers)", xlab = "Heart Rate", 
+       col = re7_hist_cols[4], breaks = bins - 1, ylim = c(0, re7_hist_ylim))
+  dev.off()
+  
+}
 
