@@ -590,7 +590,7 @@ re7_sd_tsb = 1.09
 re7_sd_tss = 0.75
 
 # with outliers
-barplot(as.matrix(re7_avg_df), main = "Resident Evil 7 Averages (With Outliers)", xlab = "Version", ylab = "Average", 
+barplot(as.matrix(re7_avg_df), main = "Resident Evil 7 Heart Rate Averages (With Outliers)", xlab = "Version", ylab = "Average", 
         beside = TRUE, col = re7_bp_cols[1], ylim = c(0, re7_bp_ylim))
 
 # RE7_TV
@@ -618,7 +618,7 @@ text(x = re7_sd_tls[2],
 ##
 
 # without outliers
-barplot(as.matrix(re7_dno_avg_df), main = "Resident Evil 7 Averages (No Outliers)", xlab = "Version", ylab = "Average", 
+barplot(as.matrix(re7_dno_avg_df), main = "Resident Evil 7 Heart Rate Averages (No Outliers)", xlab = "Version", ylab = "Average", 
         beside = TRUE, col = re7_bp_cols[2], ylim = c(0, re7_bp_ylim))
 
 # RE7_TV
@@ -651,7 +651,7 @@ re7_avg_comp_df <- data.frame(
   'RE7_VR' = c(re7_vr_avg, re7_vr_dno_avg)
 )
 
-barplot(as.matrix(re7_avg_comp_df), main = "Resident Evil 7 Averages", xlab = "Version", ylab = "Average", 
+barplot(as.matrix(re7_avg_comp_df), main = "Resident Evil 7 Heart Rate Averages", xlab = "Version", ylab = "Average", 
         beside = TRUE, legend.text = c('With Outliers', 'No Outliers'), col = re7_bp_cols, ylim = c(0, re7_bp_ylim + 50))
 
 # OUTLIERS
