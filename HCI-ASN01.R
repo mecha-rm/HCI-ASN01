@@ -239,7 +239,7 @@ bp_cols = c("red", "blue") # basic
 bp_cols = c("#2854b5", "#e0ca19") # themed
 
 # display bar plot
-barplot(as.matrix(exp_vals), main = "Demon Souls Experience Chart", xlab = "Experience", ylab = "Average",
+barplot(as.matrix(exp_vals), main = "Demon's Souls Experience Chart", xlab = "Experience", ylab = "Average",
         legend.text = agg_pos$Category, beside = TRUE, col = bp_cols, ylim = bp_ylim)
 
 # if the bar plot should be exported.
@@ -255,7 +255,7 @@ if(auto_export) {
   setEPS()
   f = paste(export_path, "hci-asn01_q1.eps", sep = "/")
   postscript(f)
-  barplot(as.matrix(exp_vals), main = "Demon Souls Experience Chart", xlab = "Experience", ylab = "Average",
+  barplot(as.matrix(exp_vals), main = "Demon's Souls Experience Chart", xlab = "Experience", ylab = "Average",
           legend.text = agg_pos$Category, beside = TRUE, col = bp_cols, ylim = bp_ylim)
   dev.off()
   
