@@ -926,3 +926,29 @@ if(auto_export) {
   
 }
 
+
+# data combined
+# television
+re7_tv_all <- data.frame (
+  'game' = c(rep('RE7_TV', times = length(re7_tv$avgHeartRate)), rep('RE7_TV_DNO', times = length(re7_tv_dno$avgHeartRate))),
+  'avgHeartRate' = c(rep(re7_tv$avgHeartRate, times = 1), rep(re7_tv_dno$avgHeartRate, times = 1))
+)
+
+# virtual reality
+re7_vr_all <- data.frame (
+  'game' = c(rep('RE7_VR', times = length(re7_vr$avgHeartRate)), rep('RE7_VR_DNO', times = length(re7_vr_dno$avgHeartRate))),
+  'avgHeartRate' = c(rep(re7_vr$avgHeartRate, times = 1), rep(re7_vr_dno$avgHeartRate, times = 1))
+)
+
+# television and virtual reality
+re7_wo_no <- data.frame (
+  'game' = c(rep('RE7_TV', times = length(re7_tv$avgHeartRate)),
+             rep('RE7_TV_DNO', times = length(re7_tv_dno$avgHeartRate)),
+             rep('RE7_VR', times = length(re7_vr$avgHeartRate)), 
+             rep('RE7_VR_DNO', times = length(re7_vr_dno$avgHeartRate))),
+  'avgHeartRate' = c(rep(re7_tv$avgHeartRate, times = 1), 
+                     rep(re7_tv_dno$avgHeartRate, times = 1),
+                     rep(re7_vr$avgHeartRate, times = 1),
+                     rep(re7_vr_dno$avgHeartRate, times = 1))
+)
+
