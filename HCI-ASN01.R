@@ -4,7 +4,7 @@
 # * Hao Tian Guan (100709845)
 # * Roderick "R.J." Montague (100701758)
 #
-# Date: 09/29/2021
+# Date: 10/01/2021
 #
 # Description: assignment 1 for human-computer interaction course.
 #
@@ -206,20 +206,8 @@ agg_neg <- aggregate(summaries$neg_avg, by=list(Category=summaries$game), FUN=me
 agg_tir <- aggregate(summaries$tiredness_avg, by=list(Category=summaries$game), FUN=mean)
 agg_rea <- aggregate(summaries$reality_avg, by=list(Category=summaries$game), FUN=mean)
 
-# TODO: fix
-# charting
-# the rep() function is being used instead of directly plugging in the values (e.g. 'positive' = rep(...) instead of 'positive' = positive)
-# this is so that the data is copied instead of reused.
 
 # question required to be in a data frame, so cbind was not used.
-
-# all experience values
-# exp_all <- data.frame(
-#  'positive' = agg_pos,
-#  'negative' = agg_neg,
-#  'tiredness' = agg_tir,
-#  'reality' = agg_rea
-#)
 
 # passed numbers only
 exp_vals <- data.frame(
@@ -369,7 +357,6 @@ dsbc_order <- c("Demon's Souls 2009", "Demon's Souls 2020")
 q_start <- 3
 
 #questions to display
-# TODO: remove
 # e.g. prints the first six (q_start = 3, q_count = 6)
 q_count <- 6 # originally set to 5.
 q_count <- q_count + 2 # makes space for other 2 (e.g. if set to 5, only 3 would show up without this)
@@ -738,24 +725,23 @@ getci95 <- function(d, coln) {
 }
 
 
-# format:
-# sample size (n)
-# standard deviation
-# median
-# 1st quartile
-# 2nd quartile
-# 3rd quartile
-# mode
-# skewess
-# kurtosis
-# 95% confidence interval
+# Format:
+# sample size (n = n())
+# standard deviation (sd)
+# median (median)
+# 1st quartile (quantile(x, 0.25))
+# 2nd quartile (quantile(x, 0.50))
+# 3rd quartile (quantile(x, 0.75))
+# mode (user-made function - getmode(x))
+# skewness (skewness(x))
+# kurtosis (kurtosis (x))
+# 95% confidence interval (user-made function - getci95())
 
 # RE7_TV (with outliers)
 print("Resident Evil 7 - TV (With Outliers)")
 re7_stats = re7_tv
 re7_stats %>%
-  dplyr::summarize(n = n(),
-                   spl = sample(avgHeartRate), # sample size
+  dplyr::summarize(n = n(), # sample size
                    sdn = sd(avgHeartRate), # standard deviation
                    med = median(avgHeartRate), # median
                    q1 = quantile(avgHeartRate, 0.25),
@@ -771,8 +757,7 @@ re7_stats %>%
 print("Resident Evil 7 - vr (With Outliers)")
 re7_stats = re7_vr
 re7_stats %>%
-  dplyr::summarize(n = n(),
-                   spl = sample(avgHeartRate), # sample size
+  dplyr::summarize(n = n(), # sample size
                    sdn = sd(avgHeartRate), # standard deviation
                    med = median(avgHeartRate), # median
                    q1 = quantile(avgHeartRate, 0.25),
@@ -789,8 +774,7 @@ re7_stats %>%
 print("Resident Evil 7 - TV (No Outliers)")
 re7_stats = re7_tv_dno
 re7_stats %>%
-  dplyr::summarize(n = n(),
-                   spl = sample(avgHeartRate), # sample size
+  dplyr::summarize(n = n(), # sample size
                    sdn = sd(avgHeartRate), # standard deviation
                    med = median(avgHeartRate), # median
                    q1 = quantile(avgHeartRate, 0.25),
@@ -806,8 +790,7 @@ re7_stats %>%
 print("Resident Evil 7 - vr (No Outliers)")
 re7_stats = re7_vr_dno
 re7_stats %>%
-  dplyr::summarize(n = n(),
-                   spl = sample(avgHeartRate), # sample size
+  dplyr::summarize(n = n(), # sample size
                    sdn = sd(avgHeartRate), # standard deviation
                    med = median(avgHeartRate), # median
                    q1 = quantile(avgHeartRate, 0.25),
@@ -951,4 +934,58 @@ re7_wo_no <- data.frame (
                      rep(re7_vr$avgHeartRate, times = 1),
                      rep(re7_vr_dno$avgHeartRate, times = 1))
 )
+
+
+# shared histograms for the TV and VR data with and without outliers
+if (!require(ggpubr)) install.packages(ggpubr)
+library(ggpubr)
+
+
+
+# RE7 TV and VR - With Outliers
+re7_comp_hist <- ggplot(re7_import, aes(x = avgHeartRate, color = ï..game))
+re7_comp_hist + geom_histogram(fill = "white", alpha = 0.5, bins = 20) + 
+  labs(x = "Heart Rates", y = "Frequency", title = "Histogram of Resident Evil 7 TV and VR Average Heart Rates (With Outliers)")
+
+# export graphs
+if(auto_export) {
+  ggsave(filename = "hci-asn03_q3_s7_all_with_outliers.png", path = export_path)
+  ggsave(filename = "hci-asn03_q3_s7_all_with_outliers.eps", path = export_path)
+}
+
+
+# RE7 TV and VR - No Outliers
+re7_comp_hist <- ggplot(re7_dno, aes(x = avgHeartRate, color = ï..game))
+re7_comp_hist + geom_histogram(fill = "white", alpha = 0.5, bins = 20) + 
+  labs(x = "Heart Rates", y = "Frequency", title = "Histogram of Resident Evil 7 TV and VR Average Heart Rates (No Outliers)")
+
+# export graphs
+if(auto_export) {
+  ggsave(filename = "hci-asn03_q3_s7_all_no_outliers.png", path = export_path)
+  ggsave(filename = "hci-asn03_q3_s7_all_no_outliers.eps", path = export_path)
+}
+
+
+# RE7 TV (With and WIthout Outliers)
+re7_comp_hist <- ggplot(re7_tv_all, aes(x = avgHeartRate, color = game))
+re7_comp_hist + geom_histogram(fill = "white", alpha = 0.5, bins = 20) + 
+  labs(x = "Heart Rates", y = "Frequency", title = "Histogram of Resident Evil 7 TV Average Heart Rates (With and Without Outliers)")
+
+# export graphs
+if(auto_export) {
+  ggsave(filename = "hci-asn03_q3_s7_tv_all.png", path = export_path)
+  ggsave(filename = "hci-asn03_q3_s7_tv_all.eps", path = export_path)
+}
+
+
+# RE7 VR (With and WIthout Outliers)
+re7_comp_hist <- ggplot(re7_vr_all, aes(x = avgHeartRate, color = game))
+re7_comp_hist + geom_histogram(fill = "white", alpha = 0.5, bins = 20) + 
+  labs(x = "Heart Rates", y = "Frequency", title = "Histogram of Resident Evil 7 TV Average Heart Rates (With and Without Outliers)")
+
+# export graphs
+if(auto_export) {
+  ggsave(filename = "hci-asn03_q3_s7_vr_all.png", path = export_path)
+  ggsave(filename = "hci-asn03_q3_s7_vr_all.eps", path = export_path)
+}
 
